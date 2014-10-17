@@ -1,0 +1,44 @@
+$(function(){
+    $("#frmEditLicense").submit(function(e){
+        e.preventDefault();
+  
+        var id = $("#id").val();
+        var domain = $("#domain").val();
+		var licensekey = $("#licensekey").val();
+		var expiry_date = $("#expiry_date").val();
+		var customer_email = $("#customer_email").val();
+		var details = $("#details").val();
+        $.ajax({
+              
+            type: "GET",
+            data: { id:id, domain:domain, licensekey:licensekey, expiry_date:expiry_date, customer_email:customer_email, details:details },
+              
+            url: "ajax/ajax.database.savelicense.php",
+            dataType: "html",
+            success: function(result){
+                if (result.indexOf("Success") > -1)
+                {
+                    $("#btnSave").html('Edited Successfully!...');
+					//$("#error").html('Log:'+result);
+					$('#btnSave').addClass("btn-success");
+                    $(window.document.location).attr('href','licenses.php');
+                    return false;
+                }else{
+                $("#btnSave").html('Saving Error!');
+                $('#btnSave').addClass("btn-danger");
+                }
+            },
+            beforeSend: function(){
+                  
+                $('#btnSave').addClass("disabled");
+                $("#btnSave").html('Processing...');
+                  
+            },
+            error: function(){
+                $("#btnSave").html('Internal Error!');
+                $('#btnSave').addClass("btn-danger");
+            }
+        });
+        return false;
+    });
+}); 

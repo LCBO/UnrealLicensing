@@ -1,0 +1,168 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<head lang="en">
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	<title>UnrealLicensing v2 Documentation</title>
+    <meta http-equiv="refresh" content="0; url=https://unreal-security.com/documentation/docs/unreal-php-licensing-system-v2/">
+	<!-- Framework CSS -->
+	<link rel="stylesheet" href="assets/blueprint-css/screen.css" type="text/css" media="screen, projection">
+	<link rel="stylesheet" href="assets/blueprint-css/print.css" type="text/css" media="print">
+	<!--[if lt IE 8]><link rel="stylesheet" href="assets/blueprint-css/ie.css" type="text/css" media="screen, projection"><![endif]-->
+	<link rel="stylesheet" href="assets/blueprint-css/plugins/fancy-type/screen.css" type="text/css" media="screen, projection">
+	<style type="text/css" media="screen">
+		p, table, hr, .box { margin-bottom:25px; }
+		.box p { margin-bottom:10px; }
+	</style>
+</head>
+
+
+<body>
+	<div class="container">
+	
+		<h3 class="center alt">&ldquo;UnrealLicensing&rdquo; Documentation by &ldquo;Giovanne Oliveira&rdquo; v2.0.901</h3>
+		
+		<hr>
+		
+		<h1 class="center">&ldquo;UnrealLicensing&rdquo;</h1>
+		
+		<div class="borderTop">
+			<div class="span-6 colborder info prepend-1">
+				<p class="prepend-top">
+					<strong>
+					Last Revision: 04/04/2013<br>
+					By: Giovanne Oliveira<br>
+					Email: <a href="mailto:jhollsantos@gmail.com">jhollsantos@gmail.com</a>
+					</strong>
+				</p>
+			</div><!-- end div .span-6 -->		
+	
+			<div class="span-12 last">
+				<p class="prepend-top append-0">Thank you for purchasing my system. If you have any questions that are beyond the scope of this help file, please feel free to email via my user page contact form <a href="http://themeforest.net/user/JhollsOliver">here</a>. Thanks so much!</p>
+			</div>
+		</div><!-- end div .borderTop -->
+		
+		<hr>
+		
+		<h2 id="toc" class="alt">Table of Contents</h2>
+		<ol class="alpha">
+			<li><a href="#fileTree">File Tree</a></li>
+			<li><a href="#Installing">Installing</a></li>
+			<li><a href="#ProtectingYourSystem">Protecting your System</a></li>
+			<li><a href="#credits">Sources and Credits</a></li>
+
+		</ol>
+		
+		<hr>
+		
+		<h3 id="fileTree"><strong>A) File Tree</strong> - <a href="#toc">top</a></h3>
+		<p>Take a Look on how your files should be after unpacking...</p>
+		
+		<img src="assets/images/fileTree.png" alt="File Tree" />
+		
+		<p>Is very very easy =D</p>
+
+		<hr>
+
+		<h3 id="Installing"><strong>B) Installing</strong> - <a href="#toc">top</a></h3>
+
+		<p>First, open the <pre>database.sql</pre> in sql folder on your script, then, copy and paste it to SQL box on PHPMyAdmin. Basically you will restaure the database. </p>  
+		
+		<p>So Then, go to the system folder, and edit the file named <pre>config.php</pre>, and insert your database infos, like username...</p> 
+
+		<p>After that, open the file <pre>globals.php</pre> and edit the line: 8, like that:</p>
+
+<pre>
+include "config.php";
+include "gauntlet.php";
+include_once "functions.php";
+include_once "aes.class.php";
+
+$patch = "/v2"; // Edit this with the relative path to your system. For example: if your system is installed on http://example.com/licensing/, you will put /licensing in that variable.
+$product_name = "Unreal Licensing";
+$version = "v2.0.901";
+
+if(isset($_SERVER['HTTPS']))
+{
+	$https = true;
+}else{
+	$https = false;
+}
+
+function sanitize_output($buffer) {
+
+    $search = array(
+        '/\>[^\S ]+/s',  // strip whitespaces after tags, except space
+        '/[^\S ]+\</s',  // strip whitespaces before tags, except space
+        '/(\s)+/s'       // shorten multiple whitespace sequences
+    );
+
+    $replace = array(
+        '>',
+        '<',
+        '\\1'
+    );
+
+    $buffer = preg_replace($search, $replace, $buffer);
+	$buffer2 = "<!--".base64_encode(base64_encode(base64_encode(base64_encode(base64_encode(base64_encode(base64_encode(base64_encode(base64_encode(base64_encode(uniqid()))))))))))."-->";
+	$buffer2 .= $buffer;
+
+    return $buffer2;
+}
+
+</pre>
+<p>Then, change the password in PHPMyAdmin, column 'users', the password uses MD5 encoding...</p>
+		<hr>
+		
+		<h3 id="#ProtectingYourSystem"><strong>C) Protecting your Script</strong> - <a href="#toc">top</a></h3>
+		
+		<p>Well... Just go to 'Gerar a Classe Add-on' button in menu, choose the product you want to protect, and just click in 'GERAR' (Generate in Portuguese.. I'm brazilian :D)</p>
+		
+		<img src="assets/images/generatingclass.png" alt="Generating Class" />
+		
+		<p> Than, copy the textbox content to a php file with the name you want ( .php of course ), than include that file in all files of your script.</p>
+		<p> For Example: </p>
+		<pre>
+			
+			include "path/to/your/file.php";
+			
+		</pre>
+		<p> Easy =D </p>
+		
+		If you want the unprotected code, here you are:
+		
+		<pre>
+
+$domain=$_SERVER['SERVER_NAME'];
+$product="Product Name";
+$licenseServer = "http://example.com/path_to_your_licensing_installation/system/core/checker.php";
+    
+$postvalue="domain=$domain&product=".urlencode($product);
+
+$ch = curl_init();
+curl_setopt($ch,CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($ch, CURLOPT_URL, $licenseServer);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $postvalue);
+$result=curl_exec($ch);
+curl_close($ch);  
+$result2 = explode("|", $result);
+
+if($result != 1) {
+
+
+die( 'Code to show license invalid');
+
+}
+</pre>
+
+	s
+		<hr>
+		
+		<p>Once again, thank you so much for purchasing this system. As I said at the beginning, I'd be glad to help you if you have any questions relating to this theme. No guarantees, but I'll do my best to assist. If you have a more general question relating to the scripts on CodeCanyon, you might consider visiting the forums and asking your question in the "Item Discussion" section.</p> 
+		
+		<p class="append-bottom alt large"><strong>Giovanne Oliveira</strong></p>
+		<p><a href="#toc">Go To Table of Contents</a></p>
+		
+		<hr class="space">
+	</div><!-- end div .container -->
+</body>
+</html>
